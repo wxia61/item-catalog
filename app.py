@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Category, Item
@@ -75,6 +75,21 @@ def editItem(category_id, item_id):
         return render_template(
             'edititem.html', category_id=category_id, item_id=item_id, item=editedItem
             )
+
+
+@app.route('/catalog.json')
+def categoryItemsJSON():
+    categories_dic = {"Category":[]}
+    categories = session.query(Category).all()
+    for category in categories:
+        items = session.query(Item).filter_by(
+            category_id=category.id
+        ).all()
+        category_dic = category.serialize
+        category_dic['itmes'] = [i.serialize for i in items]
+        categories_dic["Category"].append(category_dic)
+
+    return jsonify(categories_dic)
 
 
 if __name__ == '__main__':
