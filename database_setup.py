@@ -15,6 +15,14 @@ class Category(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
 
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'name': self.name,
+            'id': self.id,
+        }
+
 class Item(Base):
     __tablename__ = 'item'
 
@@ -24,6 +32,17 @@ class Item(Base):
     category_id = Column(Integer,ForeignKey('category.id'))
     category = relationship(Category)
     update_at =Column(DateTime, onupdate=datetime.datetime.now)
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'name': self.name,
+            'description': self.description,
+            'id': self.id,
+            'category_id': self.category_id,
+            'update_at': self.update_at,
+        }
 
 
 engine = create_engine('postgresql://vagrant:123@localhost:5432/catalog')
