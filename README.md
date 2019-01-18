@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/wxia61/item-catalog.svg?branch=master)](https://travis-ci.com/wxia61/item-catalog)
+
 # item-catalog
 An application that provides a list of items within a variety of categories as well as provide a user registration and authentication system. Registered users will have the ability to post, edit and delete their own items.
 
