@@ -13,18 +13,27 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+
 @app.route('/')
 def HelloWorld():
     categories = session.query(Category)
-    items = session.query(Item, Category).join(Category).order_by(Item.update_at.desc())
+    items = session.query(
+        Item, Category
+    ).join(Category).order_by(Item.update_at.desc())
     return render_template('main.html', categories=categories, items=items)
+
 
 @app.route('/categories/<int:category_id>/')
 def categoryItems(category_id):
     categories = session.query(Category)
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(category_id=category.id)
-    return render_template('category_items.html', categories=categories, category=category, items=items)
+    return render_template(
+        'category_items.html',
+        categories=categories,
+        category=category,
+        items=items)
+
 
 @app.route('/items/<int:category_id>/<int:item_id>/')
 def item(item_id, category_id):
@@ -38,7 +47,7 @@ def newitem(category_id):
     if request.method == 'POST':
         newItem = Item(
             name=request.form['name'],
-            description = request.form['description'],
+            description=request.form['description'],
             category_id=category_id
         )
         session.add(newItem)
@@ -46,7 +55,9 @@ def newitem(category_id):
         return redirect(url_for('categoryItems', category_id=category_id))
     else:
         categories = session.query(Category).all()
-        return render_template('newitem.html', categories= categories, category_id=category_id)
+        return render_template('newitem.html',
+                               categories=categories,
+                               category_id=category_id)
 
 
 @app.route('/categories/<int:category_id>/<int:item_id>/delete',
@@ -59,6 +70,7 @@ def deleteItem(category_id, item_id):
         return redirect(url_for('categoryItems', category_id=category_id))
     else:
         return render_template('deleteconfirmation.html', item=itemToDelete)
+
 
 @app.route('/categories/<int:category_id>/<int:item_id>/edit',
            methods=['GET', 'POST'])
@@ -73,13 +85,16 @@ def editItem(category_id, item_id):
             return redirect(url_for('categoryItems', category_id=category_id))
     else:
         return render_template(
-            'edititem.html', category_id=category_id, item_id=item_id, item=editedItem
-            )
+            'edititem.html',
+            category_id=category_id,
+            item_id=item_id,
+            item=editedItem
+        )
 
 
 @app.route('/catalog.json')
 def categoryItemsJSON():
-    categories_dic = {"Category":[]}
+    categories_dic = {"Category": []}
     categories = session.query(Category).all()
     for category in categories:
         items = session.query(Item).filter_by(
