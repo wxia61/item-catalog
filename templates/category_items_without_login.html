@@ -10,7 +10,6 @@
     {% endfor %}
   </div>
   <div class="items">
-    <a href='{{url_for('newitem', category_id = category.id) }}'> Add new item</a>
     <h3>{{category.name}} items ({{items.all()|length}} items)</h3>
     {% for i in items %}
     <div>

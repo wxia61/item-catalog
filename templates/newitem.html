@@ -1,4 +1,5 @@
-<html>
+{% extends "layout.html" %}
+{% block body %}
   <body>
     <h1> New Item </h1>
     <form action="{{url_for('newitem', category_id=category_id )}}" method = 'POST'>
@@ -16,4 +17,4 @@
       <input type='submit' value='Create'>
     </form>
   </body>
-</html>
+  {% endblock %}
