@@ -1,7 +1,5 @@
-<html>
-  <head>
-    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
-  </head>
+{% extends "layout.html" %}
+{% block body %}
   <body>
     <div class="items">
       <h3>{{item.name}}</h3>
@@ -16,5 +14,4 @@
       </div>
     </div>
   </body>
-
-</html>
+  {% endblock %}

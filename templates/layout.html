@@ -1,0 +1,14 @@
+<!doctype html>
+<title>Catalog</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+<div >
+  <h1>name</h1>
+  <div class=metanav>
+    {% if not login_session.username %}
+    <a href="{{ url_for('showLogin') }}">log in</a>
+    {% else %}
+    <a href="/gdisconnect">log out</a>
+    {% endif %}
+  </div>
+  {% block body %}{% endblock %}
+</div>
