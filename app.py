@@ -98,7 +98,7 @@ def newitem(category_id):
         newItem = Item(
             name=request.form['name'],
             description=request.form['description'],
-            category_id=category_id
+            category_id=request.form.get('cata_select')
         )
         session.add(newItem)
         session.commit()

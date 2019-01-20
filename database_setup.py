@@ -2,10 +2,9 @@ import os
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 import datetime
-
 
 Base = declarative_base()
 
@@ -33,7 +32,9 @@ class Item(Base):
     description = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
-    update_at = Column(DateTime, onupdate=datetime.datetime.now)
+    update_at = Column(DateTime,
+                       default=datetime.datetime.now,
+                       onupdate=datetime.datetime.now)
 
     @property
     def serialize(self):
@@ -50,3 +51,33 @@ class Item(Base):
 engine = create_engine('postgresql://vagrant:123@localhost:5432/catalog')
 
 Base.metadata.create_all(engine)
+
+if __name__ == "__main__":
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
+
+    category = Category(
+        name="Soccer"
+    )
+    session.add(category)
+    category = Category(
+        name="Basketball"
+    )
+    session.add(category)
+    category = Category(
+        name="Baseball"
+    )
+    session.add(category)
+    category = Category(
+        name="Football"
+    )
+    session.add(category)
+    category = Category(
+        name="Hockey"
+    )
+    session.add(category)
+    category = Category(
+        name="Skating"
+    )
+    session.add(category)
+    session.commit()
