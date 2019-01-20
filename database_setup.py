@@ -6,8 +6,6 @@ from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
 import datetime
 
-
-
 Base = declarative_base()
 
 
@@ -34,7 +32,9 @@ class Item(Base):
     description = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
-    update_at = Column(DateTime, default=datetime.datetime.now ,onupdate=datetime.datetime.now)
+    update_at = Column(DateTime,
+                       default=datetime.datetime.now,
+                       onupdate=datetime.datetime.now)
 
     @property
     def serialize(self):
@@ -52,7 +52,7 @@ engine = create_engine('postgresql://vagrant:123@localhost:5432/catalog')
 
 Base.metadata.create_all(engine)
 
-if __name__== "__main__":
+if __name__ == "__main__":
     DBSession = sessionmaker(bind=engine)
     session = DBSession()
 
