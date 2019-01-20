@@ -9,7 +9,7 @@ An application that provides a list of items within a variety of categories as w
 
 2. psql=# `alter user vagrant with encrypted password '123';`
 
-3. postgres=# `\q'
+3. postgres=# `\q`
 
 4. $ `sudo -u vagrant  psql`
 
@@ -17,9 +17,7 @@ An application that provides a list of items within a variety of categories as w
 
 6. vagrant=> `\q`
 
-7. $ `python database_setup.py`
-
-8. $ `python app.py`
+7. $ `python app.py`
 
 Open broswer and go to http://localhost:5000
 
