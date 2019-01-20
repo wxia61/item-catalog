@@ -1,16 +1,17 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="wrapper">
-  <div class="categories">
+<div class="container">
+  <div class="row">
+  <nav class="col">
     <h3>Categories</h3>
     {% for i in categories %}
     <div>
       <a href='{{url_for('categoryItems', category_id = i.id, category=category ) }}'>  {{i.name}}</a>
     </div>
     {% endfor %}
-  </div>
+  </nav>
 
-  <div class="items">
+  <section class="col">
     <h3>Latest items</h3>
     {% for i in items %}
     <div>
@@ -18,6 +19,8 @@
     </div>
     {% endfor %}
     <div>
-    </div>
+  </section>
+  </div>
 
-    {% endblock %}
+</div>
+{% endblock %}

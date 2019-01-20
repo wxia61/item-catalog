@@ -1,22 +1,26 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="wrapper">
-  <div class="categories">
-    <h3>Categories</h3>
-    {% for i in categories %}
-    <div>
-      <a href='{{url_for('categoryItems', category_id = i.id) }}'>  {{i.name}}</a>
-    </div>
-    {% endfor %}
+<div class="container">
+  <div class="row">
+    <nav class="col">
+      <h3>Categories</h3>
+      {% for i in categories %}
+      <div>
+        <a href='{{url_for('categoryItems', category_id = i.id) }}'>  {{i.name}}</a>
+      </div>
+      {% endfor %}
+    </nav>
+
+    <section class="col">
+      <a href='{{url_for('newitem', category_id = category.id) }}'> Add new item</a>
+      <h3>{{category.name}} items ({{items.all()|length}} items)</h3>
+      {% for i in items %}
+      <div>
+        <a href='{{url_for('item', item_id = i.id, category_id = category.id) }}'>  {{i.name}}</a>
+      </div>
+      {% endfor %}
+   </section>
+
   </div>
-  <div class="items">
-    <a href='{{url_for('newitem', category_id = category.id) }}'> Add new item</a>
-    <h3>{{category.name}} items ({{items.all()|length}} items)</h3>
-    {% for i in items %}
-    <div>
-      <a href='{{url_for('item', item_id = i.id, category_id = category.id) }}'>  {{i.name}}</a>
-    </div>
-    {% endfor %}
-    <div>
-    </div>
-    {% endblock %}
+</div>
+{% endblock %}

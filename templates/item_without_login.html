@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
-<body>
-    <div class="items">
-      <h3>{{item.name}}</h3>
-      <div>
-        <p>{{item.description}}</p>
-      </div>
-    </div>
-  </body>
-  {% endblock %}
+
+<div class="container">
+  <h3 class="row">{{item.name}}</h3>
+  <div class="row">
+    <p>{{item.description}}</p>
+  </div>
+</div>
+
+{% endblock %}
