@@ -15,7 +15,7 @@
     <h3>Latest items</h3>
     {% for i in items %}
     <div>
-      <p>{{i[0].name}} ({{i[1].name}})</p>
+      <a href='{{url_for('item', item_id = i[0].id, category_id = i[1].id) }}'>{{i[0].name}} ({{i[1].name}})</a>
     </div>
     {% endfor %}
     <div>
