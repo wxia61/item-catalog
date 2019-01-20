@@ -4,10 +4,22 @@
 An application that provides a list of items within a variety of categories as well as provide a user registration and authentication system. Registered users will have the ability to post, edit and delete their own items.
 
 # setup
-su vagrant -c 'createdb catalog'
-$ sudo -u postgres psql
-psql=# alter user vagrant with encrypted password '123';
 
-insert into  category(name) values('catalog2');
+1. $ `sudo -u postgres psql`
 
-insert into  item (name, description, category_id) values('item1', 'description of item1', 1);
+2. psql=# `alter user vagrant with encrypted password '123';`
+
+3. postgres=# `\q'
+
+4. $ `sudo -u vagrant  psql`
+
+5. vagrant=> `CREATE DATABASE catalog;`
+
+6. vagrant=> `\q`
+
+7. $ `python database_setup.py`
+
+8. $ `python app.py`
+
+Open broswer and go to http://localhost:5000
+
