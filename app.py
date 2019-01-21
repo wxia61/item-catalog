@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, \
     jsonify, session as login_session, send_from_directory, flash
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Category, Item
+from database_setup import Base, Category, Item, User
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 import httplib2
@@ -14,7 +14,7 @@ import string
 
 app = Flask(__name__)
 CLIENT_ID = json.loads(
-        open('client_secrets.json', 'r').read()
+    open('client_secrets.json', 'r').read()
 )['web']['client_id']
 APPLICATION_NAME = "Application"
 
@@ -78,7 +78,10 @@ def categoryItems(category_id):
 def item(item_id, category_id):
     item = session.query(Item).filter_by(id=item_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
-    if 'username' not in login_session:
+    creator = getUserInfo(item.user_id)
+    print(login_session)
+    if 'username' not in login_session \
+       or creator.id != login_session['user_id']:
         return render_template('item_without_login.html',
                                item=item,
                                category=category,
@@ -87,7 +90,8 @@ def item(item_id, category_id):
         return render_template('item.html',
                                item=item,
                                category=category,
-                               login_session=login_session)
+                               login_session=login_session,
+                               creator=creator)
 
 
 @app.route('/item/<int:category_id>/new/', methods=['GET', 'POST'])
@@ -98,7 +102,8 @@ def newitem(category_id):
         newItem = Item(
             name=request.form['name'],
             description=request.form['description'],
-            category_id=request.form.get('cata_select')
+            category_id=request.form.get('cata_select'),
+            user_id=login_session['user_id']
         )
         session.add(newItem)
         session.commit()
@@ -117,6 +122,12 @@ def deleteItem(category_id, item_id):
     if 'username' not in login_session:
         return redirect('/login')
     itemToDelete = session.query(Item).filter_by(id=item_id).one()
+    if itemToDelete.user_id != login_session['user_id']:
+        return "<script>function myFunction() \
+        {alert('You are not authorized to delete this item.= \
+        Please create your own item in order to delete.');}\
+        </script><body onload='myFunction()''>"
+
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
@@ -133,6 +144,11 @@ def editItem(category_id, item_id):
     if 'username' not in login_session:
         return redirect('/login')
     editedItem = session.query(Item).filter_by(id=item_id).one()
+    if editedItem.user_id != login_session['user_id']:
+        return "<script>function myFunction() \
+        {alert('You are not authorized to edit this item.= \
+        Please create your own item in order to edit.');}\
+        </script><body onload='myFunction()''>"
     if request.method == 'POST':
         if request.form['name'] or request.form['description']:
             editedItem.name = request.form['name']
@@ -163,6 +179,22 @@ def categoryItemsJSON():
         categories_dic["Category"].append(category_dic)
 
     return jsonify(categories_dic)
+
+
+@app.route('/item/<int:item_id>/JSON')
+def itemJSON(item_id):
+    item = session.query(Item).filter_by(
+        id=item_id
+    ).one()
+    return jsonify(item.serialize)
+
+
+@app.route('/category/<int:category_id>/JSON')
+def categorySON(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    items = session.query(Item).filter_by(
+        category_id=category.id).all()
+    return jsonify(items=[item.serialize for item in items])
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -232,6 +264,12 @@ def gconnect():
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
+    # see if user exists, if it doesn't make a new one
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+        user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
     output = ''
     output += '<h1>Welcome, '
     output += login_session['username']
@@ -244,6 +282,27 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
+
+def createUser(login_session):
+    newUser = User(email=login_session['email'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except Exception as e:
+        return None
 
 
 @app.route('/gdisconnect')

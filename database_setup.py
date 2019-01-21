@@ -9,6 +9,12 @@ import datetime
 Base = declarative_base()
 
 
+class User(Base):
+    __tablename__ = 'user'
+    id = Column(Integer, primary_key=True)
+    email = Column(String(80), unique=True, nullable=False)
+
+
 class Category(Base):
     __tablename__ = 'category'
 
@@ -31,6 +37,8 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     description = Column(String(250))
     category_id = Column(Integer, ForeignKey('category.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
     category = relationship(Category)
     update_at = Column(DateTime,
                        default=datetime.datetime.now,
