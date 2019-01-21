@@ -181,6 +181,22 @@ def categoryItemsJSON():
     return jsonify(categories_dic)
 
 
+@app.route('/item/<int:item_id>/JSON')
+def itemJSON(item_id):
+    item = session.query(Item).filter_by(
+        id=item_id
+    ).one()
+    return jsonify(item.serialize)
+
+
+@app.route('/category/<int:category_id>/JSON')
+def categorySON(category_id):
+    category = session.query(Category).filter_by(id=category_id).one()
+    items = session.query(Item).filter_by(
+        category_id=category.id).all()
+    return jsonify(items=[item.serialize for item in items])
+
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     if request.args.get('state') != login_session['state']:
